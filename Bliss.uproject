@@ -5,7 +5,7 @@
 	"Description": "",
 	"Modules": [
 		{
-			"Name": "TheBliss",
+			"Name": "Bliss",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

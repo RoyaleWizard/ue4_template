@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2018, Colby Hall. All Rights Reserved.
 
 using UnrealBuildTool;
 
-public class TheBliss : ModuleRules
+public class Bliss : ModuleRules
 {
-	public TheBliss(ReadOnlyTargetRules Target) : base(Target)
+	public Bliss(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
