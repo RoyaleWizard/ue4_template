@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, HideCategories = ("Actor Tick", LOD))
 class BLISS_API AIHUD : public AHUD
 {
 	GENERATED_BODY()
@@ -22,7 +22,7 @@ protected:
 	* @see BeginPlay
 	* @protected
 	*/
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = HUD)
 	TSubclassOf<UUserWidget> WidgetClass;	
 
 	/**
@@ -31,7 +31,7 @@ protected:
 	 * @see WidgetClass
 	 * @protected
 	 */
-	UPROPERTY()
+	UPROPERTY(Transient)
 	UUserWidget* WidgetInstance;
 
 	virtual void BeginPlay() override;

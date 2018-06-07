@@ -4,14 +4,19 @@
 	"Category": "",
 	"Description": "",
 	"Modules": [
-		{
-			"Name": "Bliss",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"CoreUObject"
-			]
-		}
+    {
+      "Name": "Bliss",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "Engine",
+        "CoreUObject"
+      ]
+    },
+    {
+      "Name": "BlissLoadingScreen",
+      "Type": "Runtime",
+      "LoadingPhase":  "PreLoadingScreen"
+    }
 	]
 }
