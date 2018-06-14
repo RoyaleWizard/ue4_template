@@ -12,14 +12,15 @@ struct FBlissLoadingScreenBrush : public FSlateDynamicImageBrush, public FGCObje
 	FBlissLoadingScreenBrush(const FName InTextureName, const FVector2D& InImageSize)
 		: FSlateDynamicImageBrush(InTextureName, InImageSize)
 	{
-		ResourceObject = LoadObject<UObject>(nullptr, *InTextureName.ToString());
+		SetResourceObject(LoadObject<UObject>(nullptr, *InTextureName.ToString()));
 	}
 
 	virtual void AddReferencedObjects(FReferenceCollector& Collector)
 	{
-		if (ResourceObject)
+		if (GetResourceObject())
 		{
-			Collector.AddReferencedObject(ResourceObject);
+			UObject* _ResoureceObject = GetResourceObject();
+			Collector.AddReferencedObject(_ResoureceObject);
 		}
 	}
 };

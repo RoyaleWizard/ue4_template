@@ -18,8 +18,13 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
 
+#define print_full(message, time, color) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, time, color, message)
+#define print_time(message, time) print_full(message, time, FColor::Black)
+#define print(message) print_time(message, 5.f)
+
 DECLARE_LOG_CATEGORY_EXTERN(LogBliss, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogBlissHUD, Warning, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogBlissEquippable, Log, All);
 
 
 /*

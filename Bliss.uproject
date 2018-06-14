@@ -1,22 +1,22 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.19",
+	"EngineAssociation": "{39FC62D2-47E9-F876-F2AF-8EB440BD82E2}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
-    {
-      "Name": "Bliss",
-      "Type": "Runtime",
-      "LoadingPhase": "Default",
-      "AdditionalDependencies": [
-        "Engine",
-        "CoreUObject"
-      ]
-    },
-    {
-      "Name": "BlissLoadingScreen",
-      "Type": "Runtime",
-      "LoadingPhase":  "PreLoadingScreen"
-    }
+		{
+			"Name": "Bliss",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"CoreUObject"
+			]
+		},
+		{
+			"Name": "BlissLoadingScreen",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		}
 	]
 }

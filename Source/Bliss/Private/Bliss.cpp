@@ -5,5 +5,6 @@
 
 DEFINE_LOG_CATEGORY(LogBliss);
 DEFINE_LOG_CATEGORY(LogBlissHUD);
+DEFINE_LOG_CATEGORY(LogBlissEquippable);
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Bliss, "Bliss" );

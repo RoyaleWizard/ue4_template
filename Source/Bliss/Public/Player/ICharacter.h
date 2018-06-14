@@ -9,11 +9,77 @@
 #define CAMERA_SOCKET "FPCamera"
 #define TP_ARM_SOCKET "TPCamera"
 
+class AICharacter;
+
 UENUM(BlueprintType)
 enum ECameraView
 {
 	FirstPerson,
 	ThirdPerson
+};
+
+/**
+* Data struct that can be serialized
+*
+* @see FInventoryArray
+*/
+USTRUCT()
+struct FInventoryItem : public FFastArraySerializerItem
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	class AIItem* Item;
+
+	void PostReplicatedAdd(const struct FInventoryArray& InArraySerializer);
+};
+
+/**
+* Special array that all InventoryItems
+*
+* @see FItemIdentifier
+*/
+USTRUCT()
+struct FInventoryArray : public FFastArraySerializer
+{
+	GENERATED_USTRUCT_BODY()
+
+private:
+	/**
+	* Actual array used for holding the data
+	*
+	* @private because we don't want anyone removing items from this
+	*/
+	UPROPERTY()
+	TArray<FInventoryItem> Array;
+
+public:
+
+	/**
+	* This is used so we can get a reference to the world
+	*
+	* @see FItemIdentifier::PostReplicatedAdd
+	*/
+	UPROPERTY(NotReplicated)
+	AICharacter* OwningCharacter;
+
+	void Add(class AIItem* Item);
+	bool Contains(const class AIItem* Item);
+	TArray<AIItem*> GetArrayAsItems() const;
+
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo & DeltaParms)
+	{
+		return FFastArraySerializer::FastArrayDeltaSerialize<FInventoryItem, FInventoryArray>(Array, DeltaParms, *this);
+	}
+};
+
+template<>
+struct TStructOpsTypeTraits<FInventoryArray> : public TStructOpsTypeTraitsBase2<FInventoryArray>
+{
+	enum
+	{
+		WithNetDeltaSerializer = true,
+	};
 };
 
 UCLASS()
@@ -46,10 +112,21 @@ private:
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);
+	void OnInteractPressed();
+	void OnFirePressed();
+	void OnFireReleased();
+	void OnAimPressed();
+	void OnAimReleased();
+
+private:
 
 	/** First Person Character Mesh*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* FirstPersonMesh;
+
+	/** Third Person Character Mesh*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* ThirdPersonMesh;
 
 	/** First Person Camera activated when in first person */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
@@ -63,27 +140,50 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* ThirdPersonCamera;
 
+	/** Inventory Component that manages all inventory functionality */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	class UICharacterInventoryComponent* InventoryComponent;
+
 public:	
 
-	class USkeletalMeshComponent* GetFirstPersonMesh() const;
+	FORCEINLINE class USkeletalMeshComponent* GetFirstPersonMesh() const { return FirstPersonMesh; }
 
 	/** Name of the First Person Mesh*/
-	static FName FirstPersonMeshName;
+	static FName FirstPersonMeshComponentName;
 
-	class UCameraComponent* GetFirstPersonCamera() const;
+	FORCEINLINE class USkeletalMeshComponent* GetThirdPersonMesh() const { return ThirdPersonMesh; }
+
+	/** Name of the Third Person Mesh*/
+	static FName ThirdPersonMeshComponentName;
+
+	FORCEINLINE class UCameraComponent* GetFirstPersonCamera() const { return FirstPersonCamera; }
 
 	/** Name of the FirstPersonCamera */
-	static FName FirstPersonCameraName;
+	static FName FirstPersonCameraComponentName;
 
-	class USpringArmComponent* GetThirdPersonArm() const;
+	FORCEINLINE class USpringArmComponent* GetThirdPersonArm() const { return ThirdPersonArm; }
 
 	/** Name of ThirdPersonSpringArm*/
-	static FName ThirdPersonArmName;
+	static FName ThirdPersonArmComponentName;
 
-	class UCameraComponent* GetThirdPersonCamera() const;
+	FORCEINLINE class UCameraComponent* GetThirdPersonCamera() const { return ThirdPersonCamera; }
 	
 	/** Name of ThirdPersonCamera*/
-	static FName ThirdPersonCameraName;
+	static FName ThirdPersonCameraComponentName;
+
+	FORCEINLINE class UICharacterInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
+	/** Name of InventoryComponent*/
+	static FName InventoryComponentName;
+
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = Character)
+	float InteractionDistance;
+
+public: 
+
+	virtual void GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const override;
 
 	/**
 	 * Get Current Camera View
@@ -112,5 +212,68 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void SwitchCamera();
+
+	/** Gets the interaction distance of this character */
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE float GetInteractionDistance() const { return InteractionDistance; }
+
+protected:
+
+	/**
+	 * Currently equipped weapon. Not replicated but changed by QueuedWeapon
+	 * 
+	 * @see QueuedEquippable
+	 */
+	UPROPERTY(Transient)
+	class AIEquippableItem* CurrentEquippable;
+	
+	/**
+	 * Weapon to be equipped
+	 *
+	 * @see CurrentEquippable
+	 * @Replicated
+	 */
+	UPROPERTY(ReplicatedUsing = OnRep_QueuedEquippable, Transient)
+	class AIEquippableItem* QueuedEquippable;
+
+	UFUNCTION()
+	virtual void OnRep_QueuedEquippable();
+
+	/**
+	 * Actual equip that is called on clients and server
+	 *
+	 * @protected
+	 */
+	virtual void LocalEquip(class AIEquippableItem* Item);
+
+public:
+
+	/**
+	 * Inventory Fast Array
+	 *
+	 * @public for easier access
+	 */
+	UPROPERTY(Replicated, Transient)
+	FInventoryArray Inventory;
+
+	UFUNCTION(BlueprintCallable, Meta=(DisplayName="Get Inventory"))
+	TArray<AIItem*> GetInventoryArray() const;
+
+	UFUNCTION(BlueprintCallable)
+	void PickupItem(class AIItem* Item);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerPickupItem(class AIItem* Item);
+
+	/**
+	 * Equips whatever item passed in
+	 *
+	 * Handles server side functions
+	 * @see CurrentEquippable
+	 * @see QueuedEquippable
+	 */
+	UFUNCTION(BlueprintCallable)
+	virtual void EquipItem(class AIEquippableItem* Item);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerEquipItem(class AIEquippableItem* Item);
 	
 };

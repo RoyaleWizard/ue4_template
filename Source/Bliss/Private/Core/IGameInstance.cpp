@@ -12,6 +12,7 @@ void UIGameInstance::Init()
 	if (!IsDedicatedServerInstance())
 	{
 		GEngine->SetMaxFPS(250);
+		return;
 		FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UIGameInstance::OnBeginLoadingScreen);
 		// FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UIGameInstance::OnEndLoadingScreen);
 	}
@@ -27,9 +28,9 @@ void UIGameInstance::OnBeginLoadingScreen(const FString& MapName)
 	{
 		LoadingScreenModule->StartInGameLoadingScreen(MapName, "");
 	}
-
+	
 	LoadingScreenWidget = SNew(SBlissLoadingScreen).TexturePath(LOADING_SCREEN_TEXTURE_PATH);
-
+	
 	UGameViewportClient* ViewportClient = GetGameViewportClient();
 	if (ViewportClient)
 	{
@@ -41,11 +42,13 @@ void UIGameInstance::OnEndLoadingScreen()
 {
 	ensure(!IsDedicatedServerInstance());
 
+	if (!LoadingScreenWidget) return;
+
 	UGameViewportClient* ViewportClient = GetGameViewportClient();
 	if (ViewportClient)
 	{
 		ViewportClient->RemoveViewportWidgetContent(LoadingScreenWidget.ToSharedRef());
 	}
-
+	
 	LoadingScreenWidget = nullptr;
 }
