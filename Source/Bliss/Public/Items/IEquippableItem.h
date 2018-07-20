@@ -6,6 +6,7 @@
 #include "Items/IItem.h"
 #include "IEquippableItem.generated.h"
 
+
 /**
  * Item that can be equipped and used
  * 
@@ -66,27 +67,31 @@ public:
 	void UnEquip();
 
 	/**
-	 * 
+	 * Event for "Fire" pressed
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void StartFiring();
 
 	/**
-	 *
+	 * Event for "Fire" released
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void StopFiring();
 	
 	/**
-	 *
+	 * Event for "Aim" pressed
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void StartAiming();
 
 	/**
-	 *
+	 * Event for "Aim" released
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void StopAiming();
+
+	virtual void SetCameraView(const ECameraView NewCameraView) override;
+
+	ECameraView GetCameraView() const;
 	
 };

@@ -58,6 +58,7 @@ Build/*
 # Ignore folders in content browsers except bliss
 Content/*
 !Content/Bliss
+!Content/Splash
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/

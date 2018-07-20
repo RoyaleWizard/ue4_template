@@ -14,7 +14,11 @@ class BLISS_API UIFirstPersonCharacterAnimInstance : public UIBaseCharacterAnimI
 {
 	GENERATED_BODY()
 	
-	
+protected:
+
+public:
+
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	
 	
 };

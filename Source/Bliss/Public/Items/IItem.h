@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "IInteractionInterface.h"
+#include "Player/ICharacter.h"
 #include "IItem.generated.h"
 
 
@@ -114,5 +115,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetInteractionOptions(AActor* EventInstigator, TArray<FInteractionOption>& OutInteractions);
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	virtual void SetCameraView(const ECameraView NewCameraView);
 	
 };

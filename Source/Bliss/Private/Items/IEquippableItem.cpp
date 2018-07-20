@@ -2,7 +2,6 @@
 
 #include "IEquippableItem.h"
 #include "Bliss.h"
-#include "Player/ICharacter.h"
 
 FName AIEquippableItem::FirstPersonMeshComponentName(TEXT("First Person Mesh"));
 FName AIEquippableItem::ThirdPersonMeshComponentName(TEXT("Third Person Mesh"));
@@ -20,7 +19,7 @@ AIEquippableItem::AIEquippableItem(const FObjectInitializer& ObjectInitializer)
 	FirstPersonMesh->bOnlyOwnerSee = true;
 	FirstPersonMesh->CastShadow = false;
 
-	ItemDescription.ItemType = EItemType::Equippable;
+	Description.ItemType = EItemType::Equippable;
 	SocketName = NAME_None;
 }
 
@@ -28,6 +27,7 @@ void AIEquippableItem::Equip_Implementation()
 {
 	// We should already have the owner by now and it should be a character
 	AICharacter* OwningCharacter = GetCharacterChecked();
+	SetActorHiddenInGame(false);
 
 	ThirdPersonMesh->AttachToComponent(OwningCharacter->GetThirdPersonMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 	FirstPersonMesh->AttachToComponent(OwningCharacter->GetFirstPersonMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
@@ -59,4 +59,23 @@ void AIEquippableItem::StopAiming_Implementation()
 
 }
 
+void AIEquippableItem::SetCameraView(const ECameraView NewCameraView)
+{
+	Super::SetCameraView(NewCameraView);
+	const bool bFirstPerson = NewCameraView == ECameraView::FirstPerson;
+
+	GetFirstPersonMesh()->SetOwnerNoSee(!bFirstPerson);
+	GetThirdPersonMesh()->SetOwnerNoSee(bFirstPerson);
+}
+
+ECameraView AIEquippableItem::GetCameraView() const
+{
+	AICharacter* OwningCharacter = GetCharacter();
+	if (OwningCharacter)
+	{
+		return OwningCharacter->GetCameraView();
+	}
+
+	return ECameraView::ThirdPerson;
+}
 

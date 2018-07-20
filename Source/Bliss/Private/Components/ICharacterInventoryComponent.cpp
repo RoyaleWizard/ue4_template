@@ -2,21 +2,39 @@
 
 #include "ICharacterInventoryComponent.h"
 #include "Items/IItem.h"
+#include "Items/IEquippableItem.h"
 #include "Player/ICharacter.h"
 
-bool UICharacterInventoryComponent::AddItem(class AIItem* Item)
+bool UICharacterInventoryComponent::AddItem(AIItem* Item)
 {
 	Super::AddItem(Item);
 
-	if (!Item)
-	{
-		return false;
-	}
+	if (!Item) return false;
 
+	Item->SetOwner(GetCharacterChecked());
 	GetCharacterChecked()->Inventory.Add(Item);
+	Item->OnPickedUp();
+
+	if (Item->IsA<AIEquippableItem>())
+	{
+		GetCharacterChecked()->EquipItem(Cast<AIEquippableItem>(Item));
+	}
 
 	return true;
 }
+
+bool UICharacterInventoryComponent::RemoveItem(AIItem* Item)
+{
+	Super::RemoveItem(Item);
+
+	if (!Item) return false;
+
+	GetCharacterChecked()->Inventory.Remove(Item);
+	Item->OnDropped();
+
+	return true;
+}
+
 
 AICharacter* UICharacterInventoryComponent::GetCharacter() const
 {

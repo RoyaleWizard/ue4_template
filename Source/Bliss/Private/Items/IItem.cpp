@@ -1,8 +1,6 @@
 // Copyright 2018, Colby Hall. All Rights Reserved.
 
 #include "IItem.h"
-#include "Player/ICharacter.h"
-
 
 AIItem::AIItem(const FObjectInitializer& ObjectInitializer)
 {
@@ -62,4 +60,9 @@ void AIItem::GetInteractionOptions_Implementation(AActor* EventInstigator, TArra
 	Out.Object = this;
 
 	OutInteractions.Add(Out);
+}
+
+void AIItem::SetCameraView(const ECameraView NewCameraView)
+{
+
 }

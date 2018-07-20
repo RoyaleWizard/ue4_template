@@ -22,6 +22,8 @@
 #define print_time(message, time) print_full(message, time, FColor::Black)
 #define print(message) print_time(message, 5.f)
 
+#define ECC_Item ECC_GameTraceChannel1
+
 DECLARE_LOG_CATEGORY_EXTERN(LogBliss, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogBlissHUD, Warning, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogBlissEquippable, Log, All);

@@ -6,8 +6,9 @@
 #include "GameFramework/Character.h"
 #include "ICharacter.generated.h"
 
-#define CAMERA_SOCKET "FPCamera"
-#define TP_ARM_SOCKET "TPCamera"
+#define FP_CAMERA_SOCKET   "FPCamera"
+#define TP_ARM_SOCKET      "TPCamera"
+#define FIREARM_AIM_SOCKET "aim"
 
 class AICharacter;
 
@@ -64,6 +65,7 @@ public:
 	AICharacter* OwningCharacter;
 
 	void Add(class AIItem* Item);
+	bool Remove(class AIItem* Item);
 	bool Contains(const class AIItem* Item);
 	TArray<AIItem*> GetArrayAsItems() const;
 
@@ -224,7 +226,7 @@ protected:
 	 * 
 	 * @see QueuedEquippable
 	 */
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadOnly)
 	class AIEquippableItem* CurrentEquippable;
 	
 	/**
@@ -247,6 +249,8 @@ protected:
 	virtual void LocalEquip(class AIEquippableItem* Item);
 
 public:
+
+	FORCEINLINE AIEquippableItem* GetCurrentEquippable() const { return CurrentEquippable; }
 
 	/**
 	 * Inventory Fast Array
@@ -275,5 +279,29 @@ public:
 	virtual void EquipItem(class AIEquippableItem* Item);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerEquipItem(class AIEquippableItem* Item);
+
+private:
+
+	uint32 bFiring : 1;
+	uint32 bAiming : 1;
+
+	/** Used to determine if should interp */
+	uint32 bAimingDirty : 1;
+
+public:
+
+	/** Returns true if aiming */
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsAiming() const;
 	
+	/** Returns true if firing */
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsFiring() const;
+
+protected:
+
+	/** Speed use when aiming */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Character)
+	float AimInterp;
+
 };

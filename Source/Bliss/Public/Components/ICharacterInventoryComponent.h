@@ -17,6 +17,7 @@ class BLISS_API UICharacterInventoryComponent : public UIInventoryComponent
 public:
 
 	virtual bool AddItem(class AIItem* Item) override;
+	virtual bool RemoveItem(class AIItem* Item) override;
 
 	/**
 	 * Gets owner casted to AICharacter

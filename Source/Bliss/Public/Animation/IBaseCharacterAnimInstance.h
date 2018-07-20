@@ -7,6 +7,23 @@
 #include "IBaseCharacterAnimInstance.generated.h"
 
 /**
+ * Used for storing handik data
+ */
+USTRUCT(BlueprintType)
+struct FHandIKData
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FVector Location;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float Alpha;
+};
+
+/**
  * 
  */
 UCLASS()
@@ -36,6 +53,21 @@ protected:
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
 	float Direction;
+
+	/**
+	 * Current Pitch the character is looking at
+	 *
+	 * @see OwningCharacter
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Character)
+	float ViewPitch;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Transform)
+	FHandIKData LeftHandIK;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Transform)
+	FHandIKData RightHandIK;
+
 
 public:
 
