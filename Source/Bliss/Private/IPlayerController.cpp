@@ -2,8 +2,18 @@
 
 #include "IPlayerController.h"
 #include "IGameInstance.h"
+#include "IPlayerCameraManager.h"
 
 #define ESCAPE_MENU_Z 9999
+
+AIPlayerController::AIPlayerController()
+{
+	PlayerCameraManagerClass = AIPlayerCameraManager::StaticClass();
+
+	InputYawScale = 1.f;
+	InputPitchScale = 1.f;
+	InputRollScale = 1.f;
+}
 
 void AIPlayerController::BeginPlay()
 {

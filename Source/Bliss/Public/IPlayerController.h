@@ -3,18 +3,21 @@
 #pragma once
 
 #include "Bliss.h"
-#include "GameFramework/PlayerController.h"
+#include "IBasePlayerController.h"
 #include "IPlayerController.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class BLISS_API AIPlayerController : public APlayerController
+UCLASS(Abstract)
+class BLISS_API AIPlayerController : public AIBasePlayerController
 {
 	GENERATED_BODY()
 	
-	
+public:
+
+	AIPlayerController();
+
 protected:
 
 	virtual void BeginPlay() override;

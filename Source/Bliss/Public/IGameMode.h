@@ -3,14 +3,14 @@
 #pragma once
 
 #include "Core.h"
-#include "GameFramework/GameMode.h"
+#include "IBaseGameMode.h"
 #include "IGameMode.generated.h"
 
 /**
  * 
  */
-UCLASS(HideCategories=(LOD, "Actor Tick"))
-class BLISS_API AIGameMode : public AGameMode
+UCLASS(HideCategories=(LOD, "Actor Tick"), Abstract)
+class BLISS_API AIGameMode : public AIBaseGameMode
 {
 	GENERATED_BODY()
 
