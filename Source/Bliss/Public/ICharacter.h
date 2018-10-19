@@ -11,6 +11,7 @@
 #define FIREARM_AIM_SOCKET "aim"
 
 class AICharacter;
+class AIWearableItem;
 
 UENUM(BlueprintType)
 enum ECameraView
@@ -22,26 +23,26 @@ enum ECameraView
 /**
 * Data struct that can be serialized
 *
-* @see FInventoryArray
+* @see FCharacterInventoryArray
 */
 USTRUCT()
-struct FInventoryItem : public FFastArraySerializerItem
+struct FCharacterInventoryItem : public FFastArraySerializerItem
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	class AIItem* Item;
+	AIWearableItem* Item;
 
-	void PostReplicatedAdd(const struct FInventoryArray& InArraySerializer);
+	void PostReplicatedAdd(const struct FCharacterInventoryArray& InArraySerializer);
 };
 
 /**
 * Special array that all InventoryItems
 *
-* @see FItemIdentifier
+* @see FCharacterInventoryItem
 */
 USTRUCT()
-struct FInventoryArray : public FFastArraySerializer
+struct FCharacterInventoryArray : public FFastArraySerializer
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -52,31 +53,31 @@ private:
 	* @private because we don't want anyone removing items from this
 	*/
 	UPROPERTY()
-	TArray<FInventoryItem> Array;
+	TArray<FCharacterInventoryItem> Array;
 
 public:
 
 	/**
 	* This is used so we can get a reference to the world
 	*
-	* @see FItemIdentifier::PostReplicatedAdd
+	* @see FCharacterInventoryItem::PostReplicatedAdd
 	*/
 	UPROPERTY(NotReplicated)
 	AICharacter* OwningCharacter;
 
-	void Add(class AIItem* Item);
-	bool Remove(class AIItem* Item);
-	bool Contains(const class AIItem* Item);
+	void Add(AIWearableItem* Item);
+	bool Remove(AIWearableItem* Item);
+	bool Contains(const AIWearableItem* Item);
 	TArray<AIItem*> GetArrayAsItems() const;
 
 	bool NetDeltaSerialize(FNetDeltaSerializeInfo & DeltaParms)
 	{
-		return FFastArraySerializer::FastArrayDeltaSerialize<FInventoryItem, FInventoryArray>(Array, DeltaParms, *this);
+		return FFastArraySerializer::FastArrayDeltaSerialize<FCharacterInventoryItem, FCharacterInventoryArray>(Array, DeltaParms, *this);
 	}
 };
 
 template<>
-struct TStructOpsTypeTraits<FInventoryArray> : public TStructOpsTypeTraitsBase2<FInventoryArray>
+struct TStructOpsTypeTraits<FCharacterInventoryArray> : public TStructOpsTypeTraitsBase2<FCharacterInventoryArray>
 {
 	enum
 	{
@@ -267,7 +268,7 @@ public:
 	 * @public for easier access
 	 */
 	UPROPERTY(Replicated, Transient)
-	FInventoryArray Inventory;
+	FCharacterInventoryArray Inventory;
 
 	UFUNCTION(BlueprintCallable, Meta=(DisplayName="Get Inventory"))
 	TArray<AIItem*> GetInventoryArray() const;
@@ -286,6 +287,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void EquipItem(class AIEquippableItem* Item);
+
+protected:
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerEquipItem(class AIEquippableItem* Item);
 

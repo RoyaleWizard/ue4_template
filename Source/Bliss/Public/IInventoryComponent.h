@@ -30,12 +30,12 @@ public:
 	virtual bool AddItem(class AIItem* Item);
 
 	/**
-	* Removes item from an Inventory
-	*
-	* @role: AuthorityOnly
-	* @param: Item is the item to be removed
-	* @returns: bool if removed or not
-	*/
+	 * Removes item from an Inventory
+	 *
+	 * @role: AuthorityOnly
+	 * @param: Item is the item to be removed
+	 * @returns: bool if removed or not
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	virtual bool RemoveItem(class AIItem* Item);
 	

@@ -11,24 +11,25 @@
 #include "IPlayerController.h"
 #include "IPlayerHUD.h"
 #include "IItemRender.h"
+#include "IWearableItem.h"
 
-void FInventoryItem::PostReplicatedAdd(const struct FInventoryArray& InArraySerializer)
+void FCharacterInventoryItem::PostReplicatedAdd(const struct FCharacterInventoryArray& InArraySerializer)
 {
 	Item->SetOwner(InArraySerializer.OwningCharacter);
 	Item->OnPickedUp();
 }
 
-void FInventoryArray::Add(AIItem* Item)
+void FCharacterInventoryArray::Add(AIWearableItem* Item)
 {
 	ensure(OwningCharacter->HasAuthority());
     
-	FInventoryItem InventoryItem;
+	FCharacterInventoryItem InventoryItem;
 	InventoryItem.Item = Item;
 	Array.Add(InventoryItem);
 	MarkItemDirty(InventoryItem);
 }
 
-bool FInventoryArray::Remove(class AIItem* Item)
+bool FCharacterInventoryArray::Remove(AIWearableItem* Item)
 {
 	ensure(OwningCharacter->HasAuthority());
     
@@ -44,12 +45,19 @@ bool FInventoryArray::Remove(class AIItem* Item)
 	return false;
 }
 
-bool FInventoryArray::Contains(const AIItem* Item)
+bool FCharacterInventoryArray::Contains(const AIWearableItem* Item)
 {
+	for (auto ItemData : Array)
+	{
+		if (ItemData.Item == Item)
+		{
+			return true;
+		}
+	}
 	return false;
 }
 
-TArray<AIItem*> FInventoryArray::GetArrayAsItems() const
+TArray<AIItem*> FCharacterInventoryArray::GetArrayAsItems() const
 {
 	TArray<AIItem*> Result;
 	Result.Reserve(Array.Num());
@@ -70,7 +78,7 @@ FName AICharacter::ThirdPersonCameraComponentName(TEXT("Third Person Camera"));
 FName AICharacter::InventoryComponentName(TEXT("Inventory Component"));
 
 AICharacter::AICharacter(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer.SetDefaultSubobjectClass<UICharacterMovementComponent>(ACharacter::CharacterMovementComponentName).DoNotCreateDefaultSubobject(ACharacter::MeshComponentName))
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UICharacterMovementComponent>(ACharacter::CharacterMovementComponentName).DoNotCreateDefaultSubobject(ACharacter::MeshComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
     

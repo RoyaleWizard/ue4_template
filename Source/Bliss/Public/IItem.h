@@ -18,7 +18,7 @@ enum class EItemType : uint8
 	Equippable,
 	Wearable,
 	Firearm,
-	Max
+	Max				UMETA(Hidden)
 };
 
 USTRUCT(BlueprintType)
@@ -42,9 +42,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float Weight;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FIntPoint Size;
 
 };
 

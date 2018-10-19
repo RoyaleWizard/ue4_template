@@ -3,6 +3,7 @@
 #include "ICharacterInventoryComponent.h"
 #include "IItem.h"
 #include "IEquippableItem.h"
+#include "IWearableItem.h"
 #include "ICharacter.h"
 
 bool UICharacterInventoryComponent::AddItem(AIItem* Item)
@@ -12,8 +13,13 @@ bool UICharacterInventoryComponent::AddItem(AIItem* Item)
 	if (!Item) return false;
 
 	Item->SetOwner(GetCharacterChecked());
-	GetCharacterChecked()->Inventory.Add(Item);
 	Item->OnPickedUp();
+
+	AIWearableItem* WearableItem = Cast<AIWearableItem>(Item);
+	if (WearableItem)
+	{
+		GetCharacterChecked()->Inventory.Add(WearableItem);
+	}
 
 	if (Item->IsA<AIEquippableItem>())
 	{
@@ -29,7 +35,12 @@ bool UICharacterInventoryComponent::RemoveItem(AIItem* Item)
 
 	if (!Item) return false;
 
-	GetCharacterChecked()->Inventory.Remove(Item);
+	AIWearableItem* WearableItem = Cast<AIWearableItem>(Item);
+	if (WearableItem)
+	{
+		GetCharacterChecked()->Inventory.Remove(WearableItem);
+	}
+	// GetCharacterChecked()->Inventory.Remove(Item);
 	Item->OnDropped();
 
 	return true;
