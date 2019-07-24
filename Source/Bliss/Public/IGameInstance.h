@@ -27,4 +27,7 @@ public:
 	
 	UFUNCTION()
 	void OnEndLoadingScreen();
+
+	UPROPERTY()
+	FString SelectedZone;
 };

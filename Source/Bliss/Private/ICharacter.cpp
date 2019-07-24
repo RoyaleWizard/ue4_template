@@ -215,6 +215,8 @@ void AICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &AICharacter::OnInventoryPressed);
 	PlayerInputComponent->BindAction("Inventory", IE_Released, this, &AICharacter::OnInventoryReleased);
+
+	PlayerInputComponent->BindAction("Map", IE_Pressed, this, &AICharacter::OnMapPressed);
     
 }
 
@@ -362,6 +364,20 @@ void AICharacter::OnInventoryReleased()
 		{
 			IPC->SetInputModeForPlaying();
 			PHUD->CloseInventory();
+		}
+	}
+}
+
+void AICharacter::OnMapPressed()
+{
+	AIPlayerController* IPC = Cast<AIPlayerController>(GetController());
+	if (IPC)
+	{
+		AIPlayerHUD* PHUD = Cast<AIPlayerHUD>(IPC->GetHUD());
+		if (PHUD)
+		{
+			IPC->SetInputModeForMenuOpen();
+			PHUD->OpenMap();
 		}
 	}
 }

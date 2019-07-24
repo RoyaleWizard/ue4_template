@@ -124,6 +124,8 @@ private:
 	void OnInventoryPressed();
 	void OnInventoryReleased();
 
+	void OnMapPressed();
+
 private:
 
 	/** First Person Character Mesh*/

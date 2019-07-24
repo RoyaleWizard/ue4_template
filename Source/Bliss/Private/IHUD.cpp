@@ -3,7 +3,6 @@
 #include "IHUD.h"
 #include "Bliss.h"
 
-
 void AIHUD::BeginPlay()
 {
 	Super::BeginPlay();
