@@ -6,15 +6,20 @@
 #include "Blueprint/UserWidget.h"
 #include "ILobbyMap.generated.h"
 
+#define GETENUMSTRING(etype, evalue) ( (FindObject<UEnum>(ANY_PACKAGE, TEXT(etype), true) != nullptr) ? FindObject<UEnum>(ANY_PACKAGE, TEXT(etype), true)->GetEnumName((int32)evalue) : FString("Invalid - are you sure enum uses UENUM() macro?") )
+
 class UIGameInstance;
+class UButton;
+class UTextBlock;
 
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class EZoneEnum : uint8
 {
+	ZE_NULL		UMETA(DisplayName = "NULL"),
 	ZE_White 	UMETA(DisplayName = "White"),
 	ZE_Green 	UMETA(DisplayName = "Green"),
-	VE_Red		UMETA(DisplayName = "Red"),
-	VE_Yellow	UMETA(DisplayName = "Yellow")
+	ZE_Red		UMETA(DisplayName = "Red"),
+	ZE_Yellow	UMETA(DisplayName = "Yellow")
 
 };
 
@@ -32,63 +37,53 @@ class BLISS_API UILobbyMap : public UUserWidget
 
 public:
 	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_White;
+	UButton* Button_White;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_Green;
+	UButton* Button_Green;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_Red;
+	UButton* Button_Red;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_Yellow;
+	UButton* Button_Yellow;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* PlayerCount_White;
+	UTextBlock* PlayerCount_White;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* PlayerCount_Green;
+	UTextBlock* PlayerCount_Green;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* PlayerCount_Red;
+	UTextBlock* PlayerCount_Red;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* PlayerCount_Yellow;
+	UTextBlock* PlayerCount_Yellow;
 
 	UFUNCTION()
-	void WhiteSelected();
+	void WhiteZoneSelected();
 
 	UFUNCTION()
-	void GreenSelected();
+	void GreenZoneSelected();
 
 	UFUNCTION()
-	void RedSelected();
+	void RedZoneSelected();
 
 	UFUNCTION()
-	void YellowSelected();
-
-	UFUNCTION()
-	void ResetWhiteSelection();
-
-	UFUNCTION()
-	void ResetGreenSelection();
-
-	UFUNCTION()
-	void ResetRedSelection();
-
-	UFUNCTION()
-	void ResetYellowSelection();
-
-	bool WhiteFlag = false;
-	bool GreenFlag = false;
-	bool RedFlag = false;
-	bool YellowFlag = false;
+	void YellowZoneSelected();
 
 	UIGameInstance* IGI;
 
-	UFUNCTION()
-	void UpdateZonePlayerCount(const FString PlayerCount, const EZoneEnum ZoneName);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enum)
+	EZoneEnum CurrentSelectedZone = EZoneEnum::ZE_NULL;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enum)
-	EVictoryEnum VictoryEnum;*/
+	UFUNCTION()
+	void AddToPlayerCount(const EZoneEnum Zone); // Adds to the current selected zone's player count locally
+
+	UFUNCTION()
+	void RemoveFromPlayerCount(const EZoneEnum Zone); // Removes from previous selected zone's player count locally
+
+
+	UPROPERTY()
+	UTextBlock* PlayerCount;
 };
