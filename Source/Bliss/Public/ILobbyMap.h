@@ -11,6 +11,8 @@
 class UIGameInstance;
 class UButton;
 class UTextBlock;
+class AIPlayerController;
+class AIPlayerState;
 
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class EZoneEnum : uint8
@@ -32,33 +34,37 @@ class BLISS_API UILobbyMap : public UUserWidget
 {
 	GENERATED_BODY()
 	
-	protected:
+protected:
 	virtual bool Initialize() override;
+
+private:
+	UFUNCTION(BlueprintCosmetic)
+	void ResetSelectedZoneButtonBGColor(EZoneEnum Zone); // Resets the background color of the selected zone locally
 
 public:
 	UPROPERTY(meta = (BindWidget))
-	UButton* Button_White;
+	UButton* White_Button;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* Button_Green;
+	UButton* Green_Button;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* Button_Red;
+	UButton* Red_Button;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* Button_Yellow;
+	UButton* Yellow_Button;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PlayerCount_White;
+	UTextBlock* White_PlayerCount;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PlayerCount_Green;
+	UTextBlock* Green_PlayerCount;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PlayerCount_Red;
+	UTextBlock* Red_PlayerCount;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PlayerCount_Yellow;
+	UTextBlock* Yellow_PlayerCount;
 
 	UFUNCTION()
 	void WhiteZoneSelected();
@@ -74,16 +80,19 @@ public:
 
 	UIGameInstance* IGI;
 
+	AIPlayerController* IPC;
+
+	AIPlayerState* IPS;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enum)
 	EZoneEnum CurrentSelectedZone = EZoneEnum::ZE_NULL;
 
 	UFUNCTION()
-	void AddToPlayerCount(const EZoneEnum Zone); // Adds to the current selected zone's player count locally
+	void IncrementZonePlayerCount(const EZoneEnum Zone); // Increments the current selected zone's player count locally
 
 	UFUNCTION()
-	void RemoveFromPlayerCount(const EZoneEnum Zone); // Removes from previous selected zone's player count locally
-
+	void DecrementZonePlayerCount(const EZoneEnum Zone); // Decrements the previous selected zone's player count locally
 
 	UPROPERTY()
-	UTextBlock* PlayerCount;
+	UTextBlock* Zone_PlayerCount;
 };

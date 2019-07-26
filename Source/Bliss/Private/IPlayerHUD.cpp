@@ -68,7 +68,7 @@ void AIPlayerHUD::OpenMap()
 
 	if (MapWidgetClass)
 	{
-		MapWidgetInstance = CreateWidget<UUserWidget>(GetWorld()->GetGameInstance(), MapWidgetClass);
+		MapWidgetInstance = CreateWidget<UILobbyMap>(GetWorld()->GetGameInstance(), MapWidgetClass);
 
 		if (MapWidgetInstance)
 		{

@@ -6,6 +6,8 @@
 #include "IHUD.h"
 #include "IPlayerHUD.generated.h"
 
+class UILobbyMap;
+
 /**
  * 
  */
@@ -52,15 +54,14 @@ protected:
 	 * @protected
 	 */
 	UPROPERTY(EditDefaultsOnly, Category = HUD)
-	TSubclassOf<UUserWidget> MapWidgetClass;
+	TSubclassOf<UILobbyMap> MapWidgetClass;
 
 	/**
 	 * Instance of inventory widget
 	 *
 	 * @see: InventoryWidgetClass
 	 */
-	UPROPERTY(Transient)
-	UUserWidget* MapWidgetInstance;
+	
 
 
 	virtual void Destroyed() override;
@@ -71,5 +72,6 @@ public:
 	//TSharedPtr<class ILobbyMap> LobbyMapWidget; // Reference to the lobby menu widget
 
 	//AIPlayerController* PlayerController;
-	
+	UPROPERTY()
+	UILobbyMap* MapWidgetInstance;
 };
