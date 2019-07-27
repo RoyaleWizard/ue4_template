@@ -18,5 +18,8 @@ public:
 
 	// Default Constructor
 	AIGameMode();
+
+	/** select best spawn point for player */
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 	
 };

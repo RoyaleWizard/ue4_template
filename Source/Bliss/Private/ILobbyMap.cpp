@@ -169,35 +169,33 @@ void UILobbyMap::YellowZoneSelected()
 void UILobbyMap::IncrementZonePlayerCount(const EZoneEnum Zone)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, FString::Printf(TEXT("Zone: %s"), *GETENUMSTRING("EZoneEnum", Zone)));
+	IGI->SelectedZone = Zone;
 
 	switch (Zone)
 	{
 	case EZoneEnum::ZE_White:
-		IGI->SelectedZone = "White";
 		Zone_PlayerCount = White_PlayerCount;
 		break;
 
 	case EZoneEnum::ZE_Green:
-		IGI->SelectedZone = "Green";
 		Zone_PlayerCount = Green_PlayerCount;
 		break;
 
 	case EZoneEnum::ZE_Red:
-		IGI->SelectedZone = "Red";
 		Zone_PlayerCount = Red_PlayerCount;
 		break;
 
 	case EZoneEnum::ZE_Yellow:
-		IGI->SelectedZone = "Yellow";
 		Zone_PlayerCount = Yellow_PlayerCount;
 		break;
 
 	default:
 		GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, TEXT("Invalid zone to Increment to"));
+		IGI->SelectedZone = EZoneEnum::ZE_NULL;
 		Zone_PlayerCount = nullptr;
 	}
 
-	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, IGI->SelectedZone);
+	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, *GETENUMSTRING("EZoneEnum", IGI->SelectedZone));
 	if (!Zone_PlayerCount)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, TEXT("Invalid Ptr to UTextBlock"));

@@ -4,6 +4,7 @@
 
 #include "Core.h"
 #include "Engine/GameInstance.h"
+#include "ILobbyMap.h"
 #include "IGameInstance.generated.h"
 
 /**
@@ -28,6 +29,6 @@ public:
 	UFUNCTION()
 	void OnEndLoadingScreen();
 
-	UPROPERTY()
-	FString SelectedZone;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Zone")
+	EZoneEnum SelectedZone = EZoneEnum::ZE_NULL;
 };
