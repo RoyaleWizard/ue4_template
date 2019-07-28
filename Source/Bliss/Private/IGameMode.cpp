@@ -7,6 +7,7 @@
 #include "IPlayerState.h"
 #include "IGameInstance.h"
 
+#define TOO_CLOSE_RADIUS 128
 
 AIGameMode::AIGameMode()
 {
@@ -19,7 +20,12 @@ AIGameMode::AIGameMode()
 
 AActor* AIGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
-	APlayerStart* FoundPlayerStart = nullptr;
+	//If PIE, don't do this, so "play from here" works
+	if (GetWorld()->WorldType == EWorldType::PIE)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, TEXT("PIE"));
+		return Super::ChoosePlayerStart_Implementation(Player);
+	}
 
 	// Arrays to hold the player starts for each zone
 	TArray<APlayerStart*> WhiteZoneStarts;
@@ -27,6 +33,12 @@ AActor* AIGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	TArray<APlayerStart*> RedZoneStarts;
 	TArray<APlayerStart*> YellowZoneStarts;
 	TArray<APlayerStart*> NullZoneStarts;
+
+	WhiteZoneStarts.Reset();
+	GreenZoneStarts.Reset();
+	RedZoneStarts.Reset();
+	YellowZoneStarts.Reset();
+	NullZoneStarts.Reset();
 
 	FString WhiteZoneSTag = "White";
 	FString GreenZoneSTag = "Green";
@@ -41,80 +53,99 @@ AActor* AIGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	UWorld* World = GetWorld();
 	for (TActorIterator<APlayerStart> It(World); It; ++It)
 	{
-		APlayerStart* PlayerStart = *It;
-
-		if (PlayerStart->IsA<APlayerStartPIE>())
+		APlayerStart* TestPlayerStart = *It;
+		if (IsSpawnpointAllowed(TestPlayerStart, Player))
 		{
-			// Always prefer the first "Play from Here" PlayerStart, if we find one while in PIE mode
-			FoundPlayerStart = PlayerStart;
-			break;
-		}
-		else
-		{
-			if (PlayerStart->PlayerStartTag == WhiteZoneTag)
+			if (TestPlayerStart->PlayerStartTag == WhiteZoneTag)
 			{
-				WhiteZoneStarts.Add(PlayerStart);
+				WhiteZoneStarts.Add(TestPlayerStart);
 			}
-			else if (PlayerStart->PlayerStartTag == GreenZoneTag)
+			else if (TestPlayerStart->PlayerStartTag == GreenZoneTag)
 			{
-				GreenZoneStarts.Add(PlayerStart);
+				GreenZoneStarts.Add(TestPlayerStart);
 			}
-			else if (PlayerStart->PlayerStartTag == RedZoneTag)
+			else if (TestPlayerStart->PlayerStartTag == RedZoneTag)
 			{
-				RedZoneStarts.Add(PlayerStart);
+				RedZoneStarts.Add(TestPlayerStart);
 			}
-			else if (PlayerStart->PlayerStartTag == YellowZoneTag)
+			else if (TestPlayerStart->PlayerStartTag == YellowZoneTag)
 			{
-				YellowZoneStarts.Add(PlayerStart);
+				YellowZoneStarts.Add(TestPlayerStart);
 			}
 			else // Null Tag
 			{
-				NullZoneStarts.Add(PlayerStart);
+				NullZoneStarts.Add(TestPlayerStart);
 			}
 		}
-		
 	}
 	
-	if (FoundPlayerStart == nullptr)
+	APlayerStart* BestStart = NULL;
+
+	AIPlayerState* IPS = Cast<AIPlayerState>(Player->PlayerState);
+	if (IPS)
 	{
-		UIGameInstance* IGI = Cast<UIGameInstance>(GetGameInstance());
-		if (IGI)
-		{
-			if (WhiteZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_White)
-			{
-				int32 RandIndex = FMath::RandRange(0, WhiteZoneStarts.Num() - 1);
-				FoundPlayerStart = WhiteZoneStarts[RandIndex];
-				WhiteZoneStarts.RemoveAt(RandIndex);
-			}
-			else if (GreenZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Green)
-			{
-				int32 RandIndex = FMath::RandRange(0, GreenZoneStarts.Num() - 1);
-				FoundPlayerStart = GreenZoneStarts[RandIndex];
-				GreenZoneStarts.RemoveAt(RandIndex);
-			}
-			else if (RedZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Red)
-			{
-				int32 RandIndex = FMath::RandRange(0, RedZoneStarts.Num() - 1);
-				FoundPlayerStart = RedZoneStarts[RandIndex];
-				RedZoneStarts.RemoveAt(RandIndex);
-			}
-			else if (YellowZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Yellow)
-			{
-				int32 RandIndex = FMath::RandRange(0, YellowZoneStarts.Num() - 1);
-				FoundPlayerStart = YellowZoneStarts[RandIndex];
-				YellowZoneStarts.RemoveAt(RandIndex);
-			}
-			else // FoundPlayerStart = nullptr
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 40.f, FColor::Emerald, FString::Printf(TEXT("%d"), NullZoneStarts.Num()));
-				int32 RandIndex = FMath::RandRange(0, NullZoneStarts.Num() - 1);
-				FoundPlayerStart = NullZoneStarts[RandIndex];
-				NullZoneStarts.RemoveAt(RandIndex);
-				GEngine->AddOnScreenDebugMessage(-1, 40.f, FColor::Emerald, FString::Printf(TEXT("%d"), NullZoneStarts.Num()));
-			}	
-		}	
+		IPS->ClientRPCSetSelectedZone_Implementation();
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Purple, TEXT("ClientRPC Sent"));
 	}
-	return FoundPlayerStart;
+
+	UIGameInstance* IGI = Cast<UIGameInstance>(Player->GetGameInstance());
+	if (IGI)
+	{
+		if (WhiteZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_White)
+		{
+			BestStart = WhiteZoneStarts[FMath::RandHelper(WhiteZoneStarts.Num())];
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("White"));
+
+		}
+		else if (GreenZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Green)
+		{
+			BestStart = GreenZoneStarts[FMath::RandHelper(GreenZoneStarts.Num())];
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("Green"));
+
+		}
+		else if (RedZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Red)
+		{
+			BestStart = RedZoneStarts[FMath::RandHelper(RedZoneStarts.Num())];
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("Red"));
+
+		}
+		else if (YellowZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Yellow)
+		{
+			BestStart = YellowZoneStarts[FMath::RandHelper(YellowZoneStarts.Num())];
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("Yellow"));
+
+		}
+		else // FoundPlayerStart = nullptr
+		{
+			//GEngine->AddOnScreenDebugMessage(-1, 40.f, FColor::Emerald, FString::Printf(TEXT("%d"), NullZoneStarts.Num()));
+			BestStart = NullZoneStarts[FMath::RandHelper(NullZoneStarts.Num())];
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("NULL"));
+
+		}
+	}
+
+	return BestStart;
 }
 
+bool AIGameMode::PlayerCanRestart_Implementation(APlayerController* Player)
+{
+	return true;
+}
+
+bool AIGameMode::IsSpawnpointAllowed(APlayerStart* SpawnPoint, AController* Player) const
+{
+	if (!SpawnPoint) return false;
+
+	// Character Proximity?
+	for (TActorIterator<ACharacter> Itr(GetWorld()); Itr; ++Itr)
+	{
+		// Check if there's any player within TOO_CLOSE_RADIUS
+		if ((SpawnPoint->GetActorLocation() - Itr->GetActorLocation()).SizeSquared() < TOO_CLOSE_RADIUS * TOO_CLOSE_RADIUS)
+		{
+			return false;
+		}
+
+	}
+	return true;
+}
 

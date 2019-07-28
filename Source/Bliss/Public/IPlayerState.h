@@ -28,6 +28,15 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation) // then the server calls the function with a multicast that executes on all clients and the server
 	virtual void NetMulticastRPCDecrementZonePlayerCount(const EZoneEnum Zone); // second rpc for all the clients
+
+	UFUNCTION(Client, Reliable, WithValidation)
+	virtual void ClientRPCSetSelectedZone();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ServerRPCSetSelectedZone(const EZoneEnum Zone);
+
+	UPROPERTY()
+	EZoneEnum Zone;
 	
 	
 };

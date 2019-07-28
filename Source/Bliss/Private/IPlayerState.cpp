@@ -4,10 +4,49 @@
 #include "ILobbyMap.h"
 #include "IPlayerHUD.h"
 #include "IPlayerController.h"
+#include "IGameInstance.h"
+#include "UnrealNetwork.h"
 
 AIPlayerState::AIPlayerState()
 {
 
+}
+
+void AIPlayerState::ServerRPCSetSelectedZone_Implementation(const EZoneEnum Zone)
+{
+	UIGameInstance* ServerIGI = Cast<UIGameInstance>(GetGameInstance());
+	if (ServerIGI && HasAuthority())
+	{
+		ServerIGI->SelectedZone = Zone;
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Orange, FString::Printf(TEXT("ServerRPC Zone: %s"), *GETENUMSTRING("EZoneEnum", Zone)));
+	}
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("ServerRPC Not Firing"));
+	
+}
+
+bool AIPlayerState::ServerRPCSetSelectedZone_Validate(const EZoneEnum Zone)
+{
+	return true;
+}
+
+void AIPlayerState::ClientRPCSetSelectedZone_Implementation()
+{
+	UIGameInstance* ClientIGI = Cast<UIGameInstance>(GetGameInstance());
+	if (ClientIGI && !HasAuthority())
+	{
+		Zone = ClientIGI->SelectedZone;
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::White, FString::Printf(TEXT("ClientRPC Zone: %s"), *GETENUMSTRING("EZoneEnum", Zone)));
+		ServerRPCSetSelectedZone(Zone);
+	}
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("ClientRPC Not Firing"));
+	
+}
+
+bool AIPlayerState::ClientRPCSetSelectedZone_Validate()
+{
+	return true;
 }
 
 void AIPlayerState::NetMulticastRPCDecrementZonePlayerCount_Implementation(const EZoneEnum Zone)

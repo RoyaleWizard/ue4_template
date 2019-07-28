@@ -6,6 +6,8 @@
 #include "IBaseGameMode.h"
 #include "IGameMode.generated.h"
 
+class APlayerStart;
+
 /**
  * 
  */
@@ -21,5 +23,11 @@ public:
 
 	/** select best spawn point for player */
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	/** always */
+	virtual bool PlayerCanRestart_Implementation(APlayerController* Player) override;
+
+	/** check if player can use spawn point */
+	virtual bool IsSpawnpointAllowed(APlayerStart* SpawnPoint, AController* Player) const;
 	
 };

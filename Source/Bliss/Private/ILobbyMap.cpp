@@ -85,9 +85,7 @@ void UILobbyMap::WhiteZoneSelected()
 	
 
 	CurrentSelectedZone = EZoneEnum::ZE_White; // Set White zone as the current selected zone
-
-	if (!IGI)
-		return;
+	IGI->SelectedZone = EZoneEnum::ZE_White;
 
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
@@ -109,9 +107,7 @@ void UILobbyMap::GreenZoneSelected()
 	}
 
 	CurrentSelectedZone = EZoneEnum::ZE_Green; // Set Green zone as the current selected zone
-
-	if (!IGI)
-		return;
+	IGI->SelectedZone = EZoneEnum::ZE_Green;
 
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
@@ -132,9 +128,7 @@ void UILobbyMap::RedZoneSelected()
 	}
 
 	CurrentSelectedZone = EZoneEnum::ZE_Red; // Set Red zone as the current selected zone
-
-	if (!IGI)
-		return;
+	IGI->SelectedZone = EZoneEnum::ZE_Red;
 	
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
@@ -155,9 +149,7 @@ void UILobbyMap::YellowZoneSelected()
 	}
 
 	CurrentSelectedZone = EZoneEnum::ZE_Yellow; // Set Yellow zone as the current selected zone
-
-	if (!IGI)
-		return;
+	IGI->SelectedZone = EZoneEnum::ZE_Yellow;
 
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
@@ -169,7 +161,6 @@ void UILobbyMap::YellowZoneSelected()
 void UILobbyMap::IncrementZonePlayerCount(const EZoneEnum Zone)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, FString::Printf(TEXT("Zone: %s"), *GETENUMSTRING("EZoneEnum", Zone)));
-	IGI->SelectedZone = Zone;
 
 	switch (Zone)
 	{
