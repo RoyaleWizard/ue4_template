@@ -1,11 +1,12 @@
 // Copyright 2018, Colby Hall. All Rights Reserved.
 
 #include "IGameMode.h"
+
 #include "ICharacter.h"
 #include "IPlayerController.h"
 #include "IHUD.h"
 #include "IPlayerState.h"
-#include "IGameInstance.h"
+#include "ILobbyMap.h"
 
 #define TOO_CLOSE_RADIUS 128
 
@@ -84,32 +85,25 @@ AActor* AIGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	AIPlayerState* IPS = Cast<AIPlayerState>(Player->PlayerState);
 	if (IPS)
 	{
-		IPS->ClientRPCSetSelectedZone_Implementation();
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Purple, TEXT("ClientRPC Sent"));
-	}
-
-	UIGameInstance* IGI = Cast<UIGameInstance>(Player->GetGameInstance());
-	if (IGI)
-	{
-		if (WhiteZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_White)
+		if (WhiteZoneStarts.Num() > 0 && IPS->SelectedZone == EZoneEnum::ZE_White)
 		{
 			BestStart = WhiteZoneStarts[FMath::RandHelper(WhiteZoneStarts.Num())];
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("White"));
 
 		}
-		else if (GreenZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Green)
+		else if (GreenZoneStarts.Num() > 0 && IPS->SelectedZone == EZoneEnum::ZE_Green)
 		{
 			BestStart = GreenZoneStarts[FMath::RandHelper(GreenZoneStarts.Num())];
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("Green"));
 
 		}
-		else if (RedZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Red)
+		else if (RedZoneStarts.Num() > 0 && IPS->SelectedZone == EZoneEnum::ZE_Red)
 		{
 			BestStart = RedZoneStarts[FMath::RandHelper(RedZoneStarts.Num())];
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("Red"));
 
 		}
-		else if (YellowZoneStarts.Num() > 0 && IGI->SelectedZone == EZoneEnum::ZE_Yellow)
+		else if (YellowZoneStarts.Num() > 0 && IPS->SelectedZone == EZoneEnum::ZE_Yellow)
 		{
 			BestStart = YellowZoneStarts[FMath::RandHelper(YellowZoneStarts.Num())];
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("Yellow"));
@@ -127,10 +121,10 @@ AActor* AIGameMode::ChoosePlayerStart_Implementation(AController* Player)
 	return BestStart;
 }
 
-bool AIGameMode::PlayerCanRestart_Implementation(APlayerController* Player)
-{
-	return true;
-}
+//bool AIGameMode::PlayerCanRestart_Implementation(APlayerController* Player)
+//{
+//	return true;
+//}
 
 bool AIGameMode::IsSpawnpointAllowed(APlayerStart* SpawnPoint, AController* Player) const
 {
@@ -147,5 +141,10 @@ bool AIGameMode::IsSpawnpointAllowed(APlayerStart* SpawnPoint, AController* Play
 
 	}
 	return true;
+}
+
+bool AIGameMode::ShouldSpawnAtStartSpot(AController* Player)
+{
+	return false;
 }
 

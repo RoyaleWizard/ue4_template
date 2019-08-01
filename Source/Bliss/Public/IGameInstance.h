@@ -28,7 +28,4 @@ public:
 	
 	UFUNCTION()
 	void OnEndLoadingScreen();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Zone")
-	EZoneEnum SelectedZone = EZoneEnum::ZE_NULL;
 };

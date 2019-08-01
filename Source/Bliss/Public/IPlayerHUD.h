@@ -25,10 +25,7 @@ public:
 	void CloseInventory();
 	
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
-	void OpenMap();
-
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
-	void CloseMap();
+	void ToggleMap();
 
 protected:
 
@@ -69,9 +66,6 @@ protected:
 	//virtual void DrawHUD() override; // The HUD is drawn on our screen
 
 public:
-	//TSharedPtr<class ILobbyMap> LobbyMapWidget; // Reference to the lobby menu widget
-
-	//AIPlayerController* PlayerController;
 	UPROPERTY()
 	UILobbyMap* MapWidgetInstance;
 };

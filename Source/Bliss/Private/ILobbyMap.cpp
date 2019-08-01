@@ -15,7 +15,6 @@ bool UILobbyMap::Initialize()
 	if (!Success)
 		return false;
 
-	IGI = Cast<UIGameInstance>(GetWorld()->GetGameInstance());
 	IPC = Cast<AIPlayerController>(GetOwningPlayer());
 
 	if (IPC)
@@ -80,17 +79,17 @@ void UILobbyMap::WhiteZoneSelected()
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		ResetSelectedZoneButtonBGColor(CurrentSelectedZone); // Make sure to reset the current selected zone button background color
-		IPS->ServerRPCDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
+		IPS->ServerDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
 	}
 	
 
 	CurrentSelectedZone = EZoneEnum::ZE_White; // Set White zone as the current selected zone
-	IGI->SelectedZone = EZoneEnum::ZE_White;
+	IPS->SelectedZone = EZoneEnum::ZE_White;
 
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		White_Button->SetBackgroundColor(FColor::Green);
-		IPS->ServerRPCIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
 	}
 	
 }
@@ -103,16 +102,16 @@ void UILobbyMap::GreenZoneSelected()
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		ResetSelectedZoneButtonBGColor(CurrentSelectedZone); // Make sure to reset the current selected zone button background color
-		IPS->ServerRPCDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
+		IPS->ServerDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
 	}
 
 	CurrentSelectedZone = EZoneEnum::ZE_Green; // Set Green zone as the current selected zone
-	IGI->SelectedZone = EZoneEnum::ZE_Green;
+	IPS->SelectedZone = CurrentSelectedZone;
 
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		Green_Button->SetBackgroundColor(FColor::Green);
-		IPS->ServerRPCIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
 	}
 }
 
@@ -124,16 +123,16 @@ void UILobbyMap::RedZoneSelected()
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		ResetSelectedZoneButtonBGColor(CurrentSelectedZone); // Make sure to reset the current selected zone button background color
-		IPS->ServerRPCDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
+		IPS->ServerDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
 	}
 
 	CurrentSelectedZone = EZoneEnum::ZE_Red; // Set Red zone as the current selected zone
-	IGI->SelectedZone = EZoneEnum::ZE_Red;
+	IPS->SelectedZone = EZoneEnum::ZE_Red;
 	
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		Red_Button->SetBackgroundColor(FColor::Green);
-		IPS->ServerRPCIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
 	}
 }
 
@@ -145,16 +144,16 @@ void UILobbyMap::YellowZoneSelected()
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		ResetSelectedZoneButtonBGColor(CurrentSelectedZone); // Make sure to reset the current selected zone button background color
-		IPS->ServerRPCDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
+		IPS->ServerDecrementZonePlayerCount(CurrentSelectedZone); // Make sure to decrement the current selected zone's player count
 	}
 
 	CurrentSelectedZone = EZoneEnum::ZE_Yellow; // Set Yellow zone as the current selected zone
-	IGI->SelectedZone = EZoneEnum::ZE_Yellow;
+	IPS->SelectedZone = EZoneEnum::ZE_Yellow;
 
 	if (IPS && CurrentSelectedZone != EZoneEnum::ZE_NULL)
 	{
 		Yellow_Button->SetBackgroundColor(FColor::Green);
-		IPS->ServerRPCIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
 	}
 }
 
@@ -182,11 +181,11 @@ void UILobbyMap::IncrementZonePlayerCount(const EZoneEnum Zone)
 
 	default:
 		GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, TEXT("Invalid zone to Increment to"));
-		IGI->SelectedZone = EZoneEnum::ZE_NULL;
+		IPS->SelectedZone = EZoneEnum::ZE_NULL;
 		Zone_PlayerCount = nullptr;
 	}
 
-	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, *GETENUMSTRING("EZoneEnum", IGI->SelectedZone));
+	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, *GETENUMSTRING("EZoneEnum", IPS->SelectedZone));
 	if (!Zone_PlayerCount)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, TEXT("Invalid Ptr to UTextBlock"));

@@ -5,17 +5,6 @@
 #include "IPlayerState.h"
 #include "IPlayerController.h"
 
-//void AIHUD::PostInitializeComponents()
-//{
-//	Super::PostInitializeComponents();
-//
-//	if (GEngine && GEngine->GameViewport) // make sure our screen is ready for the widget
-//	{
-//		SAssignNew(LobbyMapWidget, ILobbyMap).OwnerHUD(this); // add the widget and assign it to the var
-//		GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(LobbyMapWidget.ToSharedRef()));
-//	}
-//}
-
 void AIPlayerHUD::OpenInventory()
 {
 	if (InventoryWidgetClass)
@@ -57,14 +46,33 @@ void AIPlayerHUD::CloseInventory()
 	}
 }
 
-void AIPlayerHUD::OpenMap()
+void AIPlayerHUD::ToggleMap()
 {
-	if (MapWidgetInstance)
+	AIPlayerController* IPC = Cast<AIPlayerController>(GetOwningPlayerController());
+	if (!IPC) 
+		return;
+	
+	if (MapWidgetInstance && MapWidgetInstance->GetVisibility() == ESlateVisibility::Visible)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Hi"));
-		CloseMap();
+		MapWidgetInstance->RemoveFromParent();
+		MapWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+		IPC->SetInputModeForPlaying();
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("Map Closed!"));
 		return;
 	}
+	else if (MapWidgetInstance && MapWidgetInstance->GetVisibility() == ESlateVisibility::Hidden)
+	{
+		MapWidgetInstance->AddToViewport();
+		MapWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+		IPC->SetInputModeForMenuOpen();
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("Map Open!"));
+		return;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("No map instance found. let's create one!")); // First time opening the map
+	}
+	
 
 	if (MapWidgetClass)
 	{
@@ -73,6 +81,8 @@ void AIPlayerHUD::OpenMap()
 		if (MapWidgetInstance)
 		{
 			MapWidgetInstance->AddToViewport();
+			IPC->SetInputModeForMenuOpen();
+			MapWidgetInstance->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
@@ -84,33 +94,10 @@ void AIPlayerHUD::OpenMap()
 		UE_LOG(LogBlissHUD, Warning, TEXT("HUD %s does not have a WidgetClass"), *GetClass()->GetName());
 	}
 
-	if (WidgetInstance)
+	/*if (WidgetInstance)
 	{
 		WidgetInstance->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
-
-void AIPlayerHUD::CloseMap()
-{
-	if (MapWidgetInstance)
-	{
-		MapWidgetInstance->RemoveFromParent();
-
-		AIPlayerController* IPC = Cast<AIPlayerController>(GetOwningPlayerController());
-		if (IPC)
-		{
-			IPC->SetInputModeForPlaying();
-		}
-	}
-
-	MapWidgetInstance = nullptr;
-
-	if (WidgetInstance)
-	{
-		WidgetInstance->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
-	
-	
+	}*/
 }
 
 void AIPlayerHUD::Destroyed()

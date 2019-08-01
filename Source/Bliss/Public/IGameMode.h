@@ -25,9 +25,12 @@ public:
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 	/** always */
-	virtual bool PlayerCanRestart_Implementation(APlayerController* Player) override;
+	//virtual bool PlayerCanRestart_Implementation(APlayerController* Player) override;
 
 	/** check if player can use spawn point */
 	virtual bool IsSpawnpointAllowed(APlayerStart* SpawnPoint, AController* Player) const;
+
+	/** Return true if FindPlayerStart should use the StartSpot stored on Player instead of calling ChoosePlayerStart */
+	virtual bool ShouldSpawnAtStartSpot(AController* Player);
 	
 };

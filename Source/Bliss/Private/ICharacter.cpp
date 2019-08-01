@@ -376,8 +376,7 @@ void AICharacter::OnMapPressed()
 		AIPlayerHUD* PHUD = Cast<AIPlayerHUD>(IPC->GetHUD());
 		if (PHUD)
 		{
-			IPC->SetInputModeForMenuOpen();
-			PHUD->OpenMap();
+			PHUD->ToggleMap();
 		}
 	}
 }
