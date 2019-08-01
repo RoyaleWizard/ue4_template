@@ -36,15 +36,9 @@ void AIPlayerState::OverrideWith(class APlayerState* OldPlayerState)
 
 void AIPlayerState::ServerSetSelectedZone_Implementation(const EZoneEnum Zone)
 {
-	
-	if (HasAuthority())
-	{
-		this->SelectedZone = Zone;
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Orange, FString::Printf(TEXT("ServerRPC Zone: %s"), *GETENUMSTRING("EZoneEnum", Zone)));
-	}
-	else
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("ServerRPC Not Firing"));
-	
+	this->SelectedZone = Zone;
+	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Orange, FString::Printf(TEXT("ServerRPC Zone: %s"), *GETENUMSTRING("EZoneEnum", SelectedZone)));
+	//GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("ServerRPC Not Firing"));
 }
 
 bool AIPlayerState::ServerSetSelectedZone_Validate(const EZoneEnum Zone)

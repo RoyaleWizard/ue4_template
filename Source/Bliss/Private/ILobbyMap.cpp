@@ -90,6 +90,7 @@ void UILobbyMap::WhiteZoneSelected()
 	{
 		White_Button->SetBackgroundColor(FColor::Green);
 		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerSetSelectedZone(CurrentSelectedZone);
 	}
 	
 }
@@ -112,6 +113,7 @@ void UILobbyMap::GreenZoneSelected()
 	{
 		Green_Button->SetBackgroundColor(FColor::Green);
 		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerSetSelectedZone(CurrentSelectedZone);
 	}
 }
 
@@ -133,6 +135,7 @@ void UILobbyMap::RedZoneSelected()
 	{
 		Red_Button->SetBackgroundColor(FColor::Green);
 		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerSetSelectedZone(CurrentSelectedZone);
 	}
 }
 
@@ -154,6 +157,7 @@ void UILobbyMap::YellowZoneSelected()
 	{
 		Yellow_Button->SetBackgroundColor(FColor::Green);
 		IPS->ServerIncrementZonePlayerCount(CurrentSelectedZone); // Add to the current selected zone's player count using server rpc
+		IPS->ServerSetSelectedZone(CurrentSelectedZone);
 	}
 }
 
