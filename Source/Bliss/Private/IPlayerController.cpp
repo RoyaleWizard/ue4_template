@@ -1,8 +1,10 @@
 // Copyright 2018, Colby Hall. All Rights Reserved.
 
 #include "IPlayerController.h"
+
 #include "IGameInstance.h"
 #include "IPlayerCameraManager.h"
+#include "IGameState.h"
 
 #define ESCAPE_MENU_Z 9999
 
@@ -26,6 +28,8 @@ void AIPlayerController::BeginPlay()
 	}
 
 	EscapeMenuWidget = nullptr;
+
+	IGS = Cast<AIGameState>(GetWorld()->GetGameState());
 
 }
 
@@ -118,3 +122,22 @@ void AIPlayerController::SetInputModeForPlaying()
 	bShowMouseCursor = false;
 }
 
+void AIPlayerController::ServerIncrementPlayerCount_Implementation(const EZoneEnum Zone)
+{
+	IGS->IncrementPlayerCount(Zone);
+}
+
+bool AIPlayerController::ServerIncrementPlayerCount_Validate(const EZoneEnum Zone)
+{
+	return true;
+}
+
+void AIPlayerController::ServerDecrementPlayerCount_Implementation(const EZoneEnum Zone)
+{
+	IGS->DecrementPlayerCount(Zone);
+}
+
+bool AIPlayerController::ServerDecrementPlayerCount_Validate(const EZoneEnum Zone)
+{
+	return true;
+}

@@ -12,6 +12,7 @@ class UButton;
 class UTextBlock;
 class AIPlayerController;
 class AIPlayerState;
+class AIGameState;
 
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class EZoneEnum : uint8
@@ -35,6 +36,8 @@ class BLISS_API UILobbyMap : public UUserWidget
 	
 protected:
 	virtual bool Initialize() override;
+
+	//void OnInitialized();
 
 private:
 	UFUNCTION(BlueprintCosmetic)
@@ -77,18 +80,23 @@ public:
 	UFUNCTION()
 	void YellowZoneSelected();
 
+	UFUNCTION()
+	void UpdateZonesPlayerCount();
+
 	AIPlayerController* IPC;
 
 	AIPlayerState* IPS;
+
+	AIGameState* IGS;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enum)
 	EZoneEnum CurrentSelectedZone = EZoneEnum::ZE_NULL;
 
 	UFUNCTION()
-	void IncrementZonePlayerCount(const EZoneEnum Zone); // Increments the current selected zone's player count locally
+	void SetSelectedZone(const EZoneEnum Zone); // Increments the current selected zone's player count locally
 
 	UFUNCTION()
-	void DecrementZonePlayerCount(const EZoneEnum Zone); // Decrements the previous selected zone's player count locally
+	void ClearZoneSelection(const EZoneEnum Zone); // Decrements the previous selected zone's player count locally
 
 	UPROPERTY()
 	UTextBlock* Zone_PlayerCount;

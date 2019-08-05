@@ -6,6 +6,8 @@
 #include "IBasePlayerController.h"
 #include "IPlayerController.generated.h"
 
+class AIGameState;
+
 /**
  * 
  */
@@ -82,5 +84,13 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void SetInputModeForPlaying();
+
+	AIGameState* IGS;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerIncrementPlayerCount(const EZoneEnum Zone); // Increment player count for selected zone on the server 
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerDecrementPlayerCount(const EZoneEnum Zone); // Decrement player count for last selected zone on the server
 	
 };

@@ -148,3 +148,16 @@ bool AIGameMode::ShouldSpawnAtStartSpot(AController* Player)
 	return false;
 }
 
+//void AIGameMode::PostLogin(APlayerController* NewPlayer)
+//{
+//	Super::PostLogin(NewPlayer);
+//
+//	IPC = Cast<AIPlayerController>(NewPlayer);
+//	if (IPC)
+//	{
+//		AIHUD* IPHUD = Cast<AIPlayerHUD>(IPC->GetHUD());
+//		if (IPHUD && IPHUD->MapWidgetInstance)
+//			IPHUD->MapWidgetInstance->ClearZoneSelection(Zone); // Clear selection on this player controller
+//	}
+//}
+

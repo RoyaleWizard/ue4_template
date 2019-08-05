@@ -17,20 +17,17 @@ class BLISS_API AIPlayerState : public APlayerState
 public:
 	AIPlayerState();
 
-	UFUNCTION(Server, Reliable, WithValidation) // for player to player rpc you need to first call the message on the server
-	virtual void ServerIncrementZonePlayerCount(const EZoneEnum Zone); // first rpc for the server
+	UFUNCTION(Server, Reliable, WithValidation) // for player to player rpc you need to first call the function on the server
+	virtual void ServerSetSelectedZone(const EZoneEnum Zone); // first rpc for the server
+	
+	UFUNCTION(NetMulticast, Reliable, WithValidation) // then the server calls the function with a multicast that executes on all clients and the server
+	virtual void MulticastSetSelectedZone(const EZoneEnum Zone); // second rpc for all the clients
+
+	UFUNCTION(Server, Reliable, WithValidation) // for player to player rpc you need to first call the function on the server
+	virtual void ServerClearZoneSelection(const EZoneEnum Zone); // first rpc for the server
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation) // then the server calls the function with a multicast that executes on all clients and the server
-	virtual void NetMulticastIncrementZonePlayerCount(const EZoneEnum Zone); // second rpc for all the clients
-
-	UFUNCTION(Server, Reliable, WithValidation) // for player to player rpc you need to first call the message on the server
-	virtual void ServerDecrementZonePlayerCount(const EZoneEnum Zone); // first rpc for the server
-
-	UFUNCTION(NetMulticast, Reliable, WithValidation) // then the server calls the function with a multicast that executes on all clients and the server
-	virtual void NetMulticastDecrementZonePlayerCount(const EZoneEnum Zone); // second rpc for all the clients
-
-	UFUNCTION(Server, Reliable, WithValidation)
-	virtual void ServerSetSelectedZone(const EZoneEnum Zone);
+	virtual void MulticastClearZoneSelection(const EZoneEnum Zone); // second rpc for all the clients
 
 	UPROPERTY(BlueprintReadOnly, Category = "Zone")
 	EZoneEnum SelectedZone;

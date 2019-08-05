@@ -31,6 +31,8 @@ public:
 	virtual bool IsSpawnpointAllowed(APlayerStart* SpawnPoint, AController* Player) const;
 
 	/** Return true if FindPlayerStart should use the StartSpot stored on Player instead of calling ChoosePlayerStart */
-	virtual bool ShouldSpawnAtStartSpot(AController* Player);
+	virtual bool ShouldSpawnAtStartSpot(AController* Player) override;
+	
+	//virtual void PostLogin(APlayerController* NewPlayer) override;
 	
 };

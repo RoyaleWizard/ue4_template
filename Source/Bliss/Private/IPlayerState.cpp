@@ -5,6 +5,8 @@
 #include "IPlayerHUD.h"
 #include "IPlayerController.h"
 
+//#include "Net/UnrealNetwork.h"
+
 AIPlayerState::AIPlayerState()
 {
 
@@ -37,8 +39,8 @@ void AIPlayerState::OverrideWith(class APlayerState* OldPlayerState)
 void AIPlayerState::ServerSetSelectedZone_Implementation(const EZoneEnum Zone)
 {
 	this->SelectedZone = Zone;
-	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Orange, FString::Printf(TEXT("ServerRPC Zone: %s"), *GETENUMSTRING("EZoneEnum", SelectedZone)));
-	//GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("ServerRPC Not Firing"));
+	GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Orange, FString::Printf(TEXT("PS ServerRPC Zone: %s"), *GETENUMSTRING("EZoneEnum", SelectedZone)));
+	MulticastSetSelectedZone(Zone);
 }
 
 bool AIPlayerState::ServerSetSelectedZone_Validate(const EZoneEnum Zone)
@@ -46,7 +48,7 @@ bool AIPlayerState::ServerSetSelectedZone_Validate(const EZoneEnum Zone)
 	return true;
 }
 
-void AIPlayerState::NetMulticastDecrementZonePlayerCount_Implementation(const EZoneEnum Zone)
+void AIPlayerState::MulticastSetSelectedZone_Implementation(const EZoneEnum Zone)
 {
 	AIPlayerController* IPC;
 	AIPlayerHUD* IPHUD;
@@ -57,38 +59,28 @@ void AIPlayerState::NetMulticastDecrementZonePlayerCount_Implementation(const EZ
 		if (IPC)
 		{
 			IPHUD = Cast<AIPlayerHUD>(IPC->GetHUD());
-			if (IPHUD && IPHUD->MapWidgetInstance->bIsEnabled)
-				IPHUD->MapWidgetInstance->DecrementZonePlayerCount(Zone); // place the chat message on this player controller
+			if (IPHUD && IPHUD->MapWidgetInstance)
+				IPHUD->MapWidgetInstance->SetSelectedZone(Zone); // Increment zone count on this player controller
 		}
 	}
 }
 
-bool AIPlayerState::NetMulticastDecrementZonePlayerCount_Validate(const EZoneEnum Zone)
+bool AIPlayerState::MulticastSetSelectedZone_Validate(const EZoneEnum Zone)
 {
 	return true;
 }
 
-void AIPlayerState::ServerDecrementZonePlayerCount_Implementation(const EZoneEnum Zone)
+void AIPlayerState::ServerClearZoneSelection_Implementation(const EZoneEnum Zone)
 {
-	NetMulticastDecrementZonePlayerCount(Zone);
+	MulticastClearZoneSelection(Zone);
 }
 
-bool AIPlayerState::ServerDecrementZonePlayerCount_Validate(const EZoneEnum Zone)
-{
-	return true;
-}
-
-void AIPlayerState::ServerIncrementZonePlayerCount_Implementation(const EZoneEnum Zone)
-{
-	NetMulticastIncrementZonePlayerCount(Zone);
-}
-
-bool AIPlayerState::ServerIncrementZonePlayerCount_Validate(const EZoneEnum Zone)
+bool AIPlayerState::ServerClearZoneSelection_Validate(const EZoneEnum Zone)
 {
 	return true;
 }
 
-void AIPlayerState::NetMulticastIncrementZonePlayerCount_Implementation(const EZoneEnum Zone)
+void AIPlayerState::MulticastClearZoneSelection_Implementation(const EZoneEnum Zone)
 {
 	AIPlayerController* IPC;
 	AIPlayerHUD* IPHUD;
@@ -99,15 +91,14 @@ void AIPlayerState::NetMulticastIncrementZonePlayerCount_Implementation(const EZ
 		if (IPC)
 		{
 			IPHUD = Cast<AIPlayerHUD>(IPC->GetHUD());
-			if (IPHUD && IPHUD->MapWidgetInstance->bIsEnabled)
-				IPHUD->MapWidgetInstance->IncrementZonePlayerCount(Zone); // place the chat message on this player controller
+			if (IPHUD && IPHUD->MapWidgetInstance)
+				IPHUD->MapWidgetInstance->ClearZoneSelection(Zone); // Clear selection on this player controller
 		}
 	}
 }
 
-bool AIPlayerState::NetMulticastIncrementZonePlayerCount_Validate(const EZoneEnum Zone)
+bool AIPlayerState::MulticastClearZoneSelection_Validate(const EZoneEnum Zone)
 {
 	return true;
 }
-
 
