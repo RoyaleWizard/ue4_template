@@ -7,6 +7,7 @@
 #include "IHUD.h"
 #include "IPlayerState.h"
 #include "ILobbyMap.h"
+//#include "IPlayerHUD.h"
 
 #define TOO_CLOSE_RADIUS 128
 
@@ -152,12 +153,13 @@ bool AIGameMode::ShouldSpawnAtStartSpot(AController* Player)
 //{
 //	Super::PostLogin(NewPlayer);
 //
-//	IPC = Cast<AIPlayerController>(NewPlayer);
+//	AIPlayerController* IPC = Cast<AIPlayerController>(NewPlayer);
 //	if (IPC)
 //	{
-//		AIHUD* IPHUD = Cast<AIPlayerHUD>(IPC->GetHUD());
+//		AIPlayerHUD* IPHUD = Cast<AIPlayerHUD>(IPC->GetHUD());
 //		if (IPHUD && IPHUD->MapWidgetInstance)
-//			IPHUD->MapWidgetInstance->ClearZoneSelection(Zone); // Clear selection on this player controller
+//			IPHUD->MapWidgetInstance->ClientUpdateZonesPlayerCount();
 //	}
+//
 //}
 
